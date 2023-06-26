@@ -1,0 +1,1 @@
+from src.amqp.channel_factory import channel_factory
