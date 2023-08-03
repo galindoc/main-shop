@@ -1,4 +1,3 @@
-from src.apps.sections.serializers.content_text import ContentTextSerializer, ButtonSerializer
-from src.apps.sections.serializers.content_image import ContentImageSerializer
-from src.apps.sections.serializers.content import ContentSerializer
+from src.apps.sections.serializers.button import ButtonSerializer
+from src.apps.sections.serializers.content import SingleImageContentSerializer, DoubleImageContentSerializer
 from src.apps.sections.serializers.section import SectionSerializer

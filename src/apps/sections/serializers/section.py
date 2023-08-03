@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from src.apps.sections.models import Section
-from src.apps.sections.serializers import ContentSerializer
+from src.apps.sections.serializers import SingleImageContentSerializer, DoubleImageContentSerializer
 
 
 class SectionSerializer(serializers.ModelSerializer):
@@ -10,17 +10,18 @@ class SectionSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id',)
 
-    def validate(self, attrs):
-        # Validate if contents width sum is exactly 100
-        contents = attrs.get('contents')
-        if contents:
-            contents_width_sum = sum([content.width for content in contents])
-            if contents_width_sum != 100:
-                raise serializers.ValidationError('Contents width sum must be exactly 100. Current sum is {}'.format(contents_width_sum))
-            
-        return attrs
-
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['contents'] = ContentSerializer(instance.contents.all(), many=True).data
+        if instance.section_type == 'single_image':
+            data['content'] = SingleImageContentSerializer(instance.single_image_content).data
+            # Remove the double image content from the response
+            data.pop('double_image_content')
+            # Remove the single image content from the response
+            data.pop('single_image_content')
+        elif instance.section_type == 'double_image':
+            data['content'] = DoubleImageContentSerializer(instance.double_image_content).data
+            # Remove the double image content from the response
+            data.pop('double_image_content')
+            # Remove the single image content from the response
+            data.pop('single_image_content')
         return data

@@ -1,38 +1,37 @@
 import uuid
 
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 from src.apps.sections.models.base_model import TimestampMixin
 
 
-class Content(TimestampMixin):
-    TEXT_ALIGNMENT_CHOICES = (
-        ('left', 'Left'),
-        ('center', 'Center'),
-        ('right', 'Right'),
-        ('bottom', 'Bottom'),
-        ('top', 'Top'),
-        ('over', 'Over'),
-    )
+class SingleImageContent(TimestampMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    section = models.ForeignKey('sections.Section', on_delete=models.CASCADE, related_name='contents')
-    text = models.OneToOneField('sections.ContentText', on_delete=models.CASCADE, blank=True, null=True)
-    image = models.OneToOneField('sections.ContentImage', on_delete=models.CASCADE, blank=True, null=True)
+    name = models.CharField(max_length=255, blank=True, null=True)
 
-    width = models.IntegerField(
-        default=100,
-        validators=[
-            MinValueValidator(20), 
-            MaxValueValidator(100),  
-        ],
-    )
-    background_color = models.CharField(max_length=255, blank=True, null=True)
-    text_alignment = models.CharField(
-        max_length=255,
-        choices=TEXT_ALIGNMENT_CHOICES,
-        default='center',
-    )
+    link_wrapper = models.URLField(blank=True, null=True)
+    image = models.ImageField(upload_to='content_images', blank=True, null=True)
+
+    copy = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f'{self.text} - {self.id}'
+        return f'{self.name}'
+    
+
+class DoubleImageContent(TimestampMixin):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
+    name_left = models.CharField(max_length=255, blank=True, null=True)
+    link_wrapper_left = models.URLField(blank=True, null=True)
+    image_left = models.ImageField(upload_to='content_images')
+    image_left = models.ImageField(upload_to='content_images')
+    copy_left = models.TextField(blank=True, null=True)
+
+    name_right = models.CharField(max_length=255, blank=True, null=True)
+    link_wrapper_right = models.URLField(blank=True, null=True)
+    image_right = models.ImageField(upload_to='content_images')
+    image_right = models.ImageField(upload_to='content_images')
+    copy_right = models.TextField(blank=True, null=True, max_length=510)
+
+    def __str__(self):
+        return f'{self.name_left} - {self.name_right}'
